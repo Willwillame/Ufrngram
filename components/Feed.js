@@ -1,53 +1,34 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, FlatList } from 'react-native';
 import {FontAwesome5} from '@expo/vector-icons';
 import Stories from '../components/Stories';
 
 export default function Feed(){
-    const feed = [
-        {
-            id: 1,
-            nome: 'Taz',
-            imgPerfil: require('../assets/Images/bebe_taz.png'),
-            imgPost: require('../assets/Images/baby_looney_toones.png'),
-            aspectRatio: 1.776,
-        },
-        {
-            id: 2,
-            nome: 'Frajola',
-            imgPerfil: require('../assets/Images/bebe_frajola.png'),
-            imgPost: require('../assets/Images/post_frajola.png'),
-            aspectRatio: 1,
-        },
-        {
-            id: 3,
-            nome: 'Piupiu',
-            imgPerfil: require('../assets/Images/piupiu.png'),
-            imgPost: require('../assets/Images/post_piupiu.png'),
-            aspectRatio: 0.914,
-        },
-        {
-            id: 4,
-            nome: 'Patolino',
-            imgPerfil: require('../assets/Images/bebe_patolino.png'),
-            imgPost: require('../assets/Images/post_patolino.png'),
-            aspectRatio: 1,
-        }
-    ];
+  const [feed, setFeed] = useState([]);
+
+  useEffect(function(){
+    async function getData(){
+      const response = await fetch('https://mobile.ect.ufrn.br:3000/feed');
+      const feedServidor = await response.json();
+      setFeed(feedServidor)
+    }
+    getData();
+
+  }, [])
 
     function renderItem({item, index}){
         return(
         <View style={styles.post}>
-          <Stories/>    
+          {index === 0 && <Stories/>}    
           <View style={styles.posthead}>
             <View style={styles.postHeadLeft}>
-            <Image style={styles.postHeadImg} source={item.imgPerfil}/>
-            <Text>{item.nome}</Text>
+            <Image style={styles.postHeadImg} source={{uri: item.imgPerfilUri}}/>
+            <Text>{item.nomeUsuario}</Text>
             </View>
             <FontAwesome5 name='ellipsis-h' size={16} color= 'black'/>
           </View>
           <View>
-          <Image style={styles.postImg} aspectRatio={item.aspectRatio} source={item.imgPost}/>
+          <Image style={styles.postImg} aspectRatio={item.aspectRatio} source={{uri: item.imgPostUri}}/>
           </View>
           <View style={styles.postFoot}>
             <View style={styles.postFootLeft}>
